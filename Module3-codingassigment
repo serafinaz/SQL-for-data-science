@@ -1,9 +1,4 @@
 All of the questions in this quiz refer to the open source Chinook Database. 
-Please familiarize yourself with the ER diagram in order to familiarize yourself 
-with the table and column names in order to write accurate queries and get the appropriate answers.
-
-ER Diagram:
-https://ucde-rey.s3.amazonaws.com/DSV1015/ChinookDatabaseSchema.png
 
 ------------------------------------------------------------------------------------
 #_1:
@@ -67,28 +62,32 @@ frantisekw@jetbrains.com
 
 SQL Query:
 
-SELECT FirstName, LastName, City, Email, COUNT(I.CustomerId) AS InvoiceCount
-FROM Customers C 
-INNER JOIN Invoices I
-ON C.CustomerId = I.CustomerId
-GROUP BY C.CustomerId
+select 
+    count(invoices.invoiceid) as num_invoice
+    , customers.firstname
+    , customers.lastname
+    , customers.email
+from invoices
+left join customers
+    on invoices.customerid = customers.customerid
+group by invoices.customerid
 
 SQL Output:
 
-+-----------+-------------+---------------------+--------------------------+--------------+
-| FirstName | LastName    | City                | Email                    | InvoiceCount |
-+-----------+-------------+---------------------+--------------------------+--------------+
-| Luís      | Gonçalves   | São José dos Campos | luisg@embraer.com.br     |            7 |
-| Leonie    | Köhler      | Stuttgart           | leonekohler@surfeu.de    |            7 |
-| François  | Tremblay    | Montréal            | ftremblay@gmail.com      |            7 |
-| Bjørn     | Hansen      | Oslo                | bjorn.hansen@yahoo.no    |            7 |
-| František | Wichterlová | Prague              | frantisekw@jetbrains.com |            7 |
-| Helena    | Holý        | Prague              | hholy@gmail.com          |            7 |
-| Astrid    | Gruber      | Vienne              | astrid.gruber@apple.at   |            7 |
-| Daan      | Peeters     | Brussels            | daan_peeters@apple.be    |            7 |
-| Kara      | Nielsen     | Copenhagen          | kara.nielsen@jubii.dk    |            7 |
-| Eduardo   | Martins     | São Paulo           | eduardo@woodstock.com.br |            7 |
-+-----------+-------------+---------------------+--------------------------+--------------+
++-------------+-----------+-------------+--------------------------+
+| num_invoice | FirstName | LastName    | Email                    |
++-------------+-----------+-------------+--------------------------+
+|           7 | Luís      | Gonçalves   | luisg@embraer.com.br     |
+|           7 | Leonie    | Köhler      | leonekohler@surfeu.de    |
+|           7 | François  | Tremblay    | ftremblay@gmail.com      |
+|           7 | Bjørn     | Hansen      | bjorn.hansen@yahoo.no    |
+|           7 | František | Wichterlová | frantisekw@jetbrains.com |
+|           7 | Helena    | Holý        | hholy@gmail.com          |
+|           7 | Astrid    | Gruber      | astrid.gruber@apple.at   |
+|           7 | Daan      | Peeters     | daan_peeters@apple.be    |
+|           7 | Kara      | Nielsen     | kara.nielsen@jubii.dk    |
+|           7 | Eduardo   | Martins     | eduardo@woodstock.com.br |
++-------------+-----------+-------------+--------------------------+
 (Output limit exceeded, 10 of 59 total rows shown)
 
 
@@ -109,28 +108,26 @@ Breaking The Rules
 
 SQL Query:
 
-SELECT Tracks.Name, A.Name AS Artist, Albums.Title AS Album, Tracks.TrackId
-FROM( (Tracks INNER JOIN Albums 
-ON Tracks.AlbumId = Albums.AlbumId)
-INNER JOIN Artists A
-ON A.ArtistId = Albums.ArtistId);
+select tracks.name, albums.title, albums.artistid, tracks.TrackId
+from Tracks
+inner join Albums
+    on tracks.AlbumId = albums.AlbumId
 
 SQL Output:
-
-+-----------------------------------------+--------+---------------------------------------+---------+
-| Name                                    | Artist | Album                                 | TrackId |
-+-----------------------------------------+--------+---------------------------------------+---------+
-| For Those About To Rock (We Salute You) | AC/DC  | For Those About To Rock We Salute You |       1 |
-| Put The Finger On You                   | AC/DC  | For Those About To Rock We Salute You |       6 |
-| Let's Get It Up                         | AC/DC  | For Those About To Rock We Salute You |       7 |
-| Inject The Venom                        | AC/DC  | For Those About To Rock We Salute You |       8 |
-| Snowballed                              | AC/DC  | For Those About To Rock We Salute You |       9 |
-| Evil Walks                              | AC/DC  | For Those About To Rock We Salute You |      10 |
-| C.O.D.                                  | AC/DC  | For Those About To Rock We Salute You |      11 |
-| Breaking The Rules                      | AC/DC  | For Those About To Rock We Salute You |      12 |
-| Night Of The Long Knives                | AC/DC  | For Those About To Rock We Salute You |      13 |
-| Spellbound                              | AC/DC  | For Those About To Rock We Salute You |      14 |
-+-----------------------------------------+--------+---------------------------------------+---------+
++-----------------------------------------+---------------------------------------+----------+---------+
+| Name                                    | Title                                 | ArtistId | TrackId |
++-----------------------------------------+---------------------------------------+----------+---------+
+| For Those About To Rock (We Salute You) | For Those About To Rock We Salute You |        1 |       1 |
+| Put The Finger On You                   | For Those About To Rock We Salute You |        1 |       6 |
+| Let's Get It Up                         | For Those About To Rock We Salute You |        1 |       7 |
+| Inject The Venom                        | For Those About To Rock We Salute You |        1 |       8 |
+| Snowballed                              | For Those About To Rock We Salute You |        1 |       9 |
+| Evil Walks                              | For Those About To Rock We Salute You |        1 |      10 |
+| C.O.D.                                  | For Those About To Rock We Salute You |        1 |      11 |
+| Breaking The Rules                      | For Those About To Rock We Salute You |        1 |      12 |
+| Night Of The Long Knives                | For Those About To Rock We Salute You |        1 |      13 |
+| Spellbound                              | For Those About To Rock We Salute You |        1 |      14 |
++-----------------------------------------+---------------------------------------+----------+---------+
 (Output limit exceeded, 10 of 3503 total rows shown)
 
 
@@ -152,10 +149,11 @@ King
 
 SQL Query:
 
-SELECT M.LastName AS Manager,
-E.LastName AS Employee
-FROM Employees E 
-INNER JOIN Employees M
+select 
+    M.LastName AS Manager, 
+    E.LastName AS Employee
+FROM Employees AS E
+INNER JOIN Employees AS M
 ON E.ReportsTo = M.EmployeeID
 
 SQL Output:
@@ -188,30 +186,28 @@ Gilberto
 
 SQL Query:
 
-SELECT Name AS Artist
-,Artists.ArtistId
-,Albums.Title AS Album
-FROM Artists
-LEFT JOIN Albums
-ON Artists.ArtistId = Albums.ArtistId
-WHERE Album IS NULL
+select artists.name, artists.artistid, albums.albumid
+from artists
+left join albums
+on artists.artistid = albums.artistid
+where albums.albumid isnull
 
 SQL Output:
 
-+----------------------------+----------+-------+
-| Artist                     | ArtistId | Album |
-+----------------------------+----------+-------+
-| Milton Nascimento & Bebeto |       25 |  None |
-| Azymuth                    |       26 |  None |
-| João Gilberto              |       28 |  None |
-| Bebel Gilberto             |       29 |  None |
-| Jorge Vercilo              |       30 |  None |
-| Baby Consuelo              |       31 |  None |
-| Ney Matogrosso             |       32 |  None |
-| Luiz Melodia               |       33 |  None |
-| Nando Reis                 |       34 |  None |
-| Pedro Luís & A Parede      |       35 |  None |
-+----------------------------+----------+-------+
++----------------------------+----------+---------+
+| Name                       | ArtistId | AlbumId |
++----------------------------+----------+---------+
+| Milton Nascimento & Bebeto |       25 |    None |
+| Azymuth                    |       26 |    None |
+| João Gilberto              |       28 |    None |
+| Bebel Gilberto             |       29 |    None |
+| Jorge Vercilo              |       30 |    None |
+| Baby Consuelo              |       31 |    None |
+| Ney Matogrosso             |       32 |    None |
+| Luiz Melodia               |       33 |    None |
+| Nando Reis                 |       34 |    None |
+| Pedro Luís & A Parede      |       35 |    None |
++----------------------------+----------+---------+
 (Output limit exceeded, 10 of 71 total rows shown)
 
 ------------------------------------------------------------------------------------
@@ -228,18 +224,18 @@ Taylor
 
 SQL Query:
 
-SELECT FirstName, LastName
-FROM Employees
-UNION
-SELECT FirstName, LastName
-FROM Customers
-ORDER BY LastName DESC
-LIMIT 6
+select firstname, lastname
+from customers
+union
+select firstname, lastname
+from employees
+order by lastname desc
+limit 6;
 
 SQL Output:
 
 +-----------+--------------+
-| FirstName | LastName     |
+| firstname | lastname     |
 +-----------+--------------+
 | Fynn      | Zimmermann   |
 | Stanisław | Wójcik       |
@@ -265,14 +261,11 @@ A:
 
 SQL Query:
 
-SELECT C.FirstName,
-       C.LastName,
-       C.City AS CustomerCity,
-       I.BillingCity
-FROM Customers C
-INNER JOIN Invoices I
-ON C.CustomerId = I.CustomerId
-WHERE CustomerCity != BillingCity
+select C.customerid, I.billingcity, C.city
+from customers as C
+left join invoices as I
+on C.customerId = I.customerId
+where C.city != I.billingcity;
 
 SQL Output:
 
