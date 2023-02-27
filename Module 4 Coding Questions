@@ -1,0 +1,331 @@
+All of the questions in this quiz refer to the open source Chinook Database. 
+
+ER Diagram:
+https://ucde-rey.s3.amazonaws.com/DSV1015/ChinookDatabaseSchema.png
+
+------------------------------------------------------------------------------------
+#_1:
+
+Q:
+Pull a list of customer ids with the customer’s full name, and address, 
+along with combining their city and country together. 
+Be sure to make a space in between these two and make it UPPER CASE.
+
+Q:
+MOUNTAIN VIEW USA
+
+SQL Query:
+
+select
+firstname || ' ' || lastname as Fullname
+,address
+,upper(city ||' '||country) as Fulladdress
+from customers
+where customerid = 16;
+
+
+
+SQL Output:
++--------------+---------------------------+-------------------+
+| Fullname     | Address                   | Fulladdress       |
++--------------+---------------------------+-------------------+
+| Frank Harris | 1600 Amphitheatre Parkway | MOUNTAIN VIEW USA |
++--------------+---------------------------+-------------------+
+
+------------------------------------------------------------------------------------
+#_2:
+
+Q:
+Create a new employee user id by combining 
+the first 4 letters of the employee’s first name with 
+the first 2 letters of the employee’s last name. 
+
+Make the new field lower case and pull each individual step 
+to show your work.
+
+What is the final result for Robert King?
+
+A:
+robeki
+
+
+
+SQL Query:
+
+select firstname
+,lastname
+,lower(substr(firstname,1,4) || substr(lastname,1,2)) as UserID
+from employees;
+
+
+
+SQL Output:
+
++-----------+----------+--------+
+| FirstName | LastName | UserID |
++-----------+----------+--------+
+| Andrew    | Adams    | andrad |
+| Nancy     | Edwards  | nanced |
+| Jane      | Peacock  | janepe |
+| Margaret  | Park     | margpa |
+| Steve     | Johnson  | stevjo |
+| Michael   | Mitchell | michmi |
+| Robert    | King     | robeki |
+| Laura     | Callahan | laurca |
++-----------+----------+--------+
+
+
+
+
+------------------------------------------------------------------------------------
+#_3:
+
+Q:
+Show a list of employees who have worked for the company for 15 or more years 
+using the current date function. Sort by lastname ascending.
+
+What is the lastname of the last person on the list returned?
+
+A:
+
+Peacock
+
+SQL Query:
+
+select firstname
+,lastname
+,hiredate
+,(date('now') - hiredate) as Worktime
+from employees
+where (date('now') - hiredate) >15
+order by lastname asc;
+
+
+
+SQL Output:
+
++-----------+----------+---------------------+----------+
+| FirstName | LastName | HireDate            | Worktime |
++-----------+----------+---------------------+----------+
+| Andrew    | Adams    | 2002-08-14 00:00:00 |       21 |
+| Laura     | Callahan | 2004-03-04 00:00:00 |       19 |
+| Nancy     | Edwards  | 2002-05-01 00:00:00 |       21 |
+| Steve     | Johnson  | 2003-10-17 00:00:00 |       20 |
+| Robert    | King     | 2004-01-02 00:00:00 |       19 |
+| Michael   | Mitchell | 2003-10-17 00:00:00 |       20 |
+| Margaret  | Park     | 2003-05-03 00:00:00 |       20 |
+| Jane      | Peacock  | 2002-04-01 00:00:00 |       21 |
++-----------+----------+---------------------+----------+
+
+
+
+------------------------------------------------------------------------------------
+#_4:
+
+Q:
+Profiling the Customers table, answer the following question.
+
+A:
+Phone, Fax, Company, Postal Code
+
+SQL Query:
+
+select count(*) as NullCount
+from customers
+where phone isnull;
+
+SQL Output:
+
++-----------+
+| NullCount |
++-----------+
+|         1 |
++-----------+
+
+=========================
+
+SQL Query:
+
+select count(*) as NullCount
+FROM Customers
+WHERE Fax IS NULL
+
+
+
+SQL Output:
+
++-----------+
+| NullCount |
++-----------+
+|        47 |
++-----------+
+
+=========================
+
+SQL Query:
+
+select count(*) as NullCount
+FROM Customers
+WHERE FirstName IS NULL
+
+
+
+SQL Output:
+
++-----------+
+| NullCount |
++-----------+
+|         0 |
++-----------+
+
+=========================
+
+SQL Query:
+
+select count(*) as NullCount
+FROM Customers
+WHERE Address IS NULL
+
+
+
+SQL Output:
+
++-----------+
+| NullCount |
++-----------+
+|         0 |
++-----------+
+
+=========================
+
+SQL Query:
+
+select count(*) as NullCount
+FROM Customers
+WHERE Company IS NULL
+
+
+
+SQL Output:
+
++-----------+
+| NullCount |
++-----------+
+|        49 |
++-----------+
+
+=========================
+
+SQL Query:
+
+select count(*) as NullCount
+FROM Customers
+WHERE PostalCode IS NULL
+
+
+
+SQL Output:
+
++-----------+
+| NullCount |
++-----------+
+|         4 |
++-----------+
+
+=========================
+
+    column: FirstName, PostalCode, Company, Fax, Phone, Address
+ NullCount:     0           4         49     47     1      0    
+
+Column with NullCount > 0: Postal Code, Company, Fax, Phone
+
+
+
+------------------------------------------------------------------------------------
+#-5:
+
+Q:
+Find the cities with the most customers and rank in descending order.
+
+Which of the following cities indicate having 2 customers?
+
+A:
+
+Mountain View 
+Sao Paulo
+London
+
+
+
+SQL Query:
+
+select city
+,count(city) as CustomersNumber
+from customers
+group by city
+having CustomersNumber = 2
+order by count(city) desc;
+
+
+
+SQL Output:
+
++---------------+-----------------+
+| City          | CustomersNumber |
++---------------+-----------------+
+| Berlin        |               2 |
+| London        |               2 |
+| Mountain View |               2 |
+| Paris         |               2 |
+| Prague        |               2 |
+| São Paulo     |               2 |
++---------------+-----------------+
+
+
+
+------------------------------------------------------------------------------------
+#_6:
+
+Q:
+Create a new customer invoice id 
+by combining a customer’s invoice id with their first and last name 
+while ordering your query in the following order: 
+firstname, lastname, and invoiceID.
+
+Select all of the correct "AstridGruber" entries 
+that are returned in your results below. 
+
+Select all that apply.
+
+A:
+AstridGruber273
+AstridGruber296
+AstridGruber370
+
+
+
+SQL Query:
+
+select C.firstname
+,C.lastname
+,C.firstname || C.lastname || I.invoiceid as NewInvoiceId
+from customers C
+INNER JOIN Invoices I
+on C.CustomerId = I.CustomerID
+where NewInvoiceId LIKE 'AstridGruber%'
+order by 1,2,3;
+
+
+
+SQL Output:
++-----------+----------+-----------------+
+| FirstName | LastName | NewInvoiceId    |
++-----------+----------+-----------------+
+| Astrid    | Gruber   | AstridGruber144 |
+| Astrid    | Gruber   | AstridGruber273 |
+| Astrid    | Gruber   | AstridGruber296 |
+| Astrid    | Gruber   | AstridGruber318 |
+| Astrid    | Gruber   | AstridGruber370 |
+| Astrid    | Gruber   | AstridGruber78  |
+| Astrid    | Gruber   | AstridGruber89  |
++-----------+----------+-----------------+
